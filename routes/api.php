@@ -16,6 +16,8 @@ Route::prefix('auth')->group(function () {
     Route::post('/verificar-cuenta',     [AuthController::class, 'verificarCuenta']);
     Route::post('/verificar-2fa',        [AuthController::class, 'verificar2fa']);
     Route::post('/enviar-recuperacion',  [AuthController::class, 'enviarEnlaceRecuperacion']);
+   Route::put('/auth/perfil',          [AuthController::class, 'actualizarPerfil']);
+Route::put('/auth/perfil/password', [AuthController::class, 'cambiarPassword']);
     Route::post('/restablecer-password', [AuthController::class, 'restablecerPassword']);
 });
 

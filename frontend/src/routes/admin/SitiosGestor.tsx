@@ -91,7 +91,7 @@ export default function SitiosGestor() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50 text-gray-500 text-[12px] uppercase tracking-wider border-b border-gray-200">
-                    <th className="px-6 py-4 font-bold">Cod</th>
+                    {/* Se eliminó el <th> de Cod */}
                     <th className="px-6 py-4 font-bold">Nombre</th>
                     <th className="px-6 py-4 font-bold">Coordenadas</th>
                     <th className="px-6 py-4 font-bold">Estado</th>
@@ -101,7 +101,7 @@ export default function SitiosGestor() {
                 <tbody className="text-[14px]">
                   {datosSitios.map(s => (
                     <tr key={s.cod} className="hover:bg-gray-50 border-b border-gray-100 transition-colors">
-                      <td className="px-6 py-4 text-gray-500 font-bold">#{s.cod}</td>
+                      {/* Se eliminó el <td> de #{s.cod} */}
                       <td className="px-6 py-4 font-bold text-[#1A1A2E]">
                         <div className="flex items-center gap-3">
                           {s.foto
@@ -129,7 +129,7 @@ export default function SitiosGestor() {
                     </tr>
                   ))}
                   {datosSitios.length === 0 && (
-                    <tr><td colSpan={5} className="px-6 py-16 text-center text-gray-400">
+                    <tr><td colSpan={4} className="px-6 py-16 text-center text-gray-400">
                       <MapIcon size={48} className="mx-auto mb-3 text-gray-300" />
                       <p className="font-bold text-[#1A1A2E]">No hay sitios registrados</p>
                     </td></tr>

@@ -203,7 +203,60 @@ class AuthController
             'paso'     => '2fa',
         ]);
     }
+// ==================== ACTUALIZAR PERFIL ====================
+public function actualizarPerfil(Request $request)
+{
+    $user = JWTAuth::parseToken()->authenticate();
 
+    $request->validate([
+        'nombre'           => 'sometimes|string|max:50',
+        'apellido_paterno' => 'sometimes|string|max:50',
+        'apellido_materno' => 'nullable|string|max:50',
+        'telefono'         => 'nullable|string|max:20',
+    ]);
+
+    $user->update($request->only([
+        'nombre', 'apellido_paterno', 'apellido_materno', 'telefono'
+    ]));
+
+    return response()->json([
+        'mensaje' => 'Perfil actualizado correctamente.',
+        'usuario' => [
+            'cod'              => $user->cod,
+            'nombre'           => $user->nombre,
+            'apellido_paterno' => $user->apellido_paterno,
+            'apellido_materno' => $user->apellido_materno,
+            'email'            => $user->email,
+            'telefono'         => $user->telefono,
+            'foto_perfil'      => $user->foto_perfil,
+            'cod_rol'          => $user->cod_rol,
+        ],
+    ]);
+}
+
+// ==================== CAMBIAR CONTRASEÑA ====================
+public function cambiarPassword(Request $request)
+{
+    $user = JWTAuth::parseToken()->authenticate();
+
+    $request->validate([
+        'password_actual' => 'required|string',
+        'password_nuevo'  => [
+            'required', 'string', 'min:8',
+            'regex:/[a-z]/', 'regex:/[A-Z]/',
+            'regex:/[0-9]/', 'regex:/[@$!%*#?&]/',
+        ],
+    ]);
+
+    if (!Hash::check($request->password_actual, $user->password)) {
+        return response()->json(['mensaje' => 'La contraseña actual es incorrecta.'], 422);
+    }
+
+    $user->password = Hash::make($request->password_nuevo);
+    $user->save();
+
+    return response()->json(['mensaje' => 'Contraseña actualizada correctamente.']);
+}
     // ==================== VERIFICAR 2FA ====================
     public function verificar2fa(Request $request)
     {
