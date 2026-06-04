@@ -1,3 +1,4 @@
+// Panel Oficinista — Diana Tours v1.2.0
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
