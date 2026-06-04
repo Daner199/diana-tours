@@ -177,4 +177,121 @@ class ReservaController extends Controller
             'USD_por_BOB' => round(1 / self::TIPO_CAMBIO_USD, 4),
         ]);
     }
+    // ===== ADMIN: VER TODAS LAS RESERVAS =====
+public function indexAdmin(Request $request)
+{
+    $query = Reserva::with([
+        'paquete:cod,nombre,foto_principal,duracion_horas',
+        'turista:cod,nombre,apellido_paterno,apellido_materno,email,telefono',
+        'pagos',
+    ])->orderBy('cod', 'desc');
+
+    // Filtro opcional por estado
+    if ($request->filled('estado') && $request->estado !== 'todos') {
+        $query->where('estado', $request->estado);
+    }
+
+    $reservas = $query->get()->map(function ($r) {
+        return [
+            'cod'                => $r->cod,
+            'fecha_reserva'      => $r->fecha_reserva,
+            'cantidad_pasajeros' => $r->cantidad_pasajeros,
+            'estado'             => $r->estado,
+            'turista' => $r->turista ? [
+                'cod'              => $r->turista->cod,
+                'nombre_completo'  => trim("{$r->turista->nombre} {$r->turista->apellido_paterno} " . ($r->turista->apellido_materno ?? '')),
+                'email'            => $r->turista->email,
+                'telefono'         => $r->turista->telefono,
+            ] : null,
+            'paquete' => $r->paquete ? [
+                'cod'            => $r->paquete->cod,
+                'nombre'         => $r->paquete->nombre,
+                'foto_principal' => $r->paquete->foto_principal,
+                'duracion_horas' => $r->paquete->duracion_horas,
+            ] : null,
+            'pago' => $r->pagos->first() ? [
+                'monto_pagado' => $r->pagos->first()->monto_pagado,
+                'metodo_pago'  => $r->pagos->first()->metodo_pago,
+                'fecha_pago'   => $r->pagos->first()->fecha_pago,
+                'estado'       => $r->pagos->first()->estado,
+            ] : null,
+        ];
+    });
+
+    return response()->json($reservas);
+}
+
+// ===== ADMIN: CAMBIAR ESTADO DE RESERVA =====
+public function cambiarEstado(Request $request, $cod)
+{
+    $request->validate([
+        'estado' => 'required|in:confirmada,completada,cancelada',
+    ]);
+
+    $reserva = Reserva::find($cod);
+
+    if (!$reserva) {
+        return response()->json(['mensaje' => 'Reserva no encontrada.'], 404);
+    }
+
+    // Reglas de transición de estado
+    $transicionesPermitidas = [
+        'pendiente'  => ['confirmada', 'cancelada'],
+        'confirmada' => ['completada', 'cancelada'],
+    ];
+
+    if (!isset($transicionesPermitidas[$reserva->estado]) ||
+        !in_array($request->estado, $transicionesPermitidas[$reserva->estado])) {
+        return response()->json([
+            'mensaje' => "No se puede cambiar de '{$reserva->estado}' a '{$request->estado}'."
+        ], 422);
+    }
+
+    DB::beginTransaction();
+    try {
+        $reserva->estado = $request->estado;
+        $reserva->save();
+
+        // Si se confirma la reserva, actualizar el estado del pago a 'confirmado'
+        if ($request->estado === 'confirmada') {
+            $reserva->pagos()->update(['estado' => 'confirmado']);
+        }
+
+        DB::commit();
+        return response()->json([
+            'mensaje'  => 'Estado actualizado correctamente.',
+            'reserva'  => $reserva->cod,
+            'estado'   => $reserva->estado,
+        ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['mensaje' => 'Error al actualizar el estado.'], 500);
+    }
+}
+
+// ===== VOUCHER PDF (placeholder — se completa con DomPDF) =====
+public function generarVoucher($cod)
+{
+    $user = JWTAuth::parseToken()->authenticate();
+
+    $reserva = Reserva::with([
+        'paquete.sitios',
+        'turista',
+        'pagos',
+    ])->where('cod', $cod)
+      ->where('cod_turista', $user->cod)
+      ->first();
+
+    if (!$reserva) {
+        return response()->json(['mensaje' => 'Reserva no encontrada.'], 404);
+    }
+
+    // Por ahora devuelve JSON — se reemplaza con DomPDF en el paso 4
+    return response()->json([
+        'mensaje'  => 'DomPDF pendiente de instalación.',
+        'reserva'  => $reserva->cod,
+        'paquete'  => $reserva->paquete->nombre,
+        'turista'  => "{$reserva->turista->nombre} {$reserva->turista->apellido_paterno}",
+    ]);
+}
 }

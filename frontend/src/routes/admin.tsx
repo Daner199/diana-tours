@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {  useNavigate } from "react-router-dom";
-import { MapPin, Package, LogOut, Camera, Users, DollarSign, FileText, LayoutDashboard } from "lucide-react";
+import { MapPin, Package, LogOut, Camera, Users, DollarSign, FileText, LayoutDashboard, Calendar, Globe } from "lucide-react";
 import ModalPerfil from "../components/ModalPerfil";
 import SitiosGestor from "./admin/SitiosGestor";
 import PaquetesGestor from "./admin/PaquetesGestor";
 import UsuariosGestor from "./admin/UsuariosGestor";
 import DashboardGestor from "./admin/DashboardGestor";
+import ReservasAdmin from "./admin/ReservasAdmin";
+import GruposGestor from "./admin/GruposGestor";
+import CajaGestor from "./admin/CajaGestor";
+import GemeloGestor from "./admin/GemeloGestor";
 
 // Interface para TypeScript
 interface AdminUserData {
@@ -29,8 +33,8 @@ export function Admin() {
   });
 
   // Control de Vistas y Modales
-  type Vista = "dashboard" | "sitios" | "paquetes" | "usuarios" | "pagos" | "reportes";
-const [vistaActiva, setVistaActiva] = useState<Vista>("dashboard");
+  type Vista = "dashboard" | "sitios" | "paquetes" | "usuarios" | "reservas" | "grupos" | "pagos" | "reportes" | "gemelo";
+  const [vistaActiva, setVistaActiva] = useState<Vista>("dashboard");
   const [modalPerfil, setModalPerfil] = useState(false);
 
   // Proteger ruta
@@ -49,6 +53,10 @@ const [vistaActiva, setVistaActiva] = useState<Vista>("dashboard");
     case "sitios":    return <SitiosGestor />;
     case "paquetes":  return <PaquetesGestor />;
     case "usuarios":  return <UsuariosGestor />;
+    case "reservas":  return <ReservasAdmin />;
+    case "grupos": return <GruposGestor />;
+    case "pagos":   return <CajaGestor />;
+    case "gemelo":  return <GemeloGestor />;
     default: return <div className="p-8 text-gray-500 font-medium">Módulo en construcción...</div>;
   }
 };
@@ -94,8 +102,17 @@ const [vistaActiva, setVistaActiva] = useState<Vista>("dashboard");
             <div className="px-6 mb-3"><span className="text-[#D4A017] text-[11px] font-black uppercase tracking-widest opacity-80">Administración</span></div>
             <nav className="space-y-1">
               <MenuBoton activa={vistaActiva === "usuarios"} onClick={() => setVistaActiva("usuarios")} icono={<Users size={20} />} texto="Usuarios y Guías" />
+              <MenuBoton activa={vistaActiva === "reservas"} onClick={() => setVistaActiva("reservas")} icono={<Calendar size={20} />} texto="Reservas" />
+              <MenuBoton
+  activa={vistaActiva === "grupos"}
+  onClick={() => setVistaActiva("grupos")}
+  icono={<Users size={20} />}
+  texto="Grupos Operativos"
+/>
               <MenuBoton activa={vistaActiva === "pagos"} onClick={() => setVistaActiva("pagos")} icono={<DollarSign size={20} />} texto="Control de Pagos" />
               <MenuBoton activa={vistaActiva === "reportes"} onClick={() => setVistaActiva("reportes")} icono={<FileText size={20} />} texto="Reportes" />
+              <MenuBoton activa={vistaActiva === "gemelo"} onClick={() => setVistaActiva("gemelo")} icono={<Globe size={20} />} texto="Gemelo 360°" />
+
             </nav>
           </div>
         </div>

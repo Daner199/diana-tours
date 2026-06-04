@@ -9,9 +9,10 @@ import { Home } from './routes/home'
 import { Login } from './routes/login'
 import { Admin } from './routes/admin'
 import { PaqueteDetalle } from './routes/PaqueteDetalle'
-
-// ✅ 1. IMPORTAMOS TU PANEL TURISTA CON EL NOMBRE EXACTO DE TU ARCHIVO
 import { Turista } from './routes/turista'
+import { Guia } from './routes/guia'
+import { Viewer360 } from './routes/Viewer360'
+import { Oficinista } from './routes/oficinista'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -37,6 +38,9 @@ createRoot(document.getElementById('root')!).render(
 
         {/* ✅ 2. AGREGAMOS LA RUTA DEL PANEL DEL TURISTA AQUÍ */}
         <Route path="/turista" element={<Turista />} />
+        <Route path="/guia" element={<Guia />} />
+        <Route path="/viewer" element={<Viewer360 />} />
+        <Route path="/oficinista" element={<Oficinista />} />
 
       </Routes>
     </BrowserRouter>

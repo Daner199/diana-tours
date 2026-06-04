@@ -149,7 +149,7 @@ const coloresRol: Record<string, string> = {
                           </div>
                           <div>
                             <p className="font-bold text-[#1A1A2E]">{u.nombre} {u.apellido_paterno}</p>
-                            <p className="text-gray-400 text-[12px]">#{u.cod}</p>
+
                           </div>
                         </div>
                       </td>
