@@ -112,7 +112,7 @@ const coloresRol: Record<string, string> = {
         <button
           onClick={() => setModalUsuario(true)}
           className="bg-[#1A1A2E] hover:bg-[#D4A017] text-white px-5 py-2.5 rounded-xl font-bold text-[14px] flex items-center gap-2 shadow-md transition-colors cursor-pointer">
-          <Plus size={18} /> Nuevo Usuario
+          <Plus size={18} /><span>Nuevo Usuario</span>
         </button>
       </header>
 
@@ -220,7 +220,7 @@ const coloresRol: Record<string, string> = {
               <button onClick={() => setEliminarItem(null)} className="flex-1 border border-gray-200 text-gray-600 py-3 rounded-xl font-medium hover:bg-gray-50">Cancelar</button>
               <button onClick={handleEliminar} disabled={eliminando}
                 className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors">
-                {eliminando ? <Loader2 size={18} className="animate-spin" /> : <><Trash2 size={18} /> Eliminar</>}
+                {eliminando ? <Loader2 size={18} className="animate-spin" /> : <><Trash2 size={18} /><span>Eliminar</span></>}
               </button>
             </div>
           </div>
@@ -342,8 +342,7 @@ function ModalUsuario({ usuario, roles, onCerrar, onGuardado }: ModalUsuarioProp
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-[13px] font-bold text-[#1A1A2E] mb-1.5">
-                <Lock size={13} className="inline mr-1" />
-                {usuario ? "Nueva contraseña (opcional)" : "Contraseña *"}
+                <Lock size={13} className="inline mr-1" /><span>{usuario ? "Nueva contraseña (opcional)" : "Contraseña *"}</span>
               </label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)}
                 placeholder={usuario ? "Dejar vacío para no cambiar" : "Mín. 8 caracteres"}
@@ -365,7 +364,7 @@ function ModalUsuario({ usuario, roles, onCerrar, onGuardado }: ModalUsuarioProp
           <button onClick={onCerrar} className="flex-1 border border-gray-200 bg-white text-gray-600 py-3 rounded-xl font-medium hover:bg-gray-100 transition-colors cursor-pointer">Cancelar</button>
           <button onClick={handleGuardar} disabled={guardando}
             className="flex-1 bg-[#1A1A2E] hover:bg-[#D4A017] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-60">
-            {guardando ? <Loader2 size={18} className="animate-spin" /> : <><Save size={18} /> {usuario ? "Actualizar" : "Crear Usuario"}</>}
+            {guardando ? <Loader2 size={18} className="animate-spin" /> : <><Save size={18} /><span>{usuario ? "Actualizar" : "Crear Usuario"}</span></>}
           </button>
         </div>
       </div>
