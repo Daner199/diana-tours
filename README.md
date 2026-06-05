@@ -1,59 +1,168 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌍 Diana Tours — Sistema de Gestión Turística
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma web de turismo con Gemelo Digital 360° y autenticación segura con JWT + 2FA.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🏗️ Arquitectura
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+Usuario (Browser)
+      │
+      ▼
+┌─────────────────────────┐
+│  Frontend (React+NGINX) │  :80  → https://diana-tours-frontend.onrender.com
+└────────────┬────────────┘
+             │ HTTPS
+             ▼
+┌─────────────────────────┐
+│  Backend (Laravel 11)   │  :8000 → https://diana-tours-backend.onrender.com
+└────────────┬────────────┘
+             │ PostgreSQL interno
+             ▼
+┌─────────────────────────┐
+│  Base de Datos          │  PostgreSQL 16 (Render)
+│  (PostgreSQL)           │
+└─────────────────────────┘
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Redes Docker (desarrollo local):**
+- `diana-network` — red bridge interna
+- Puerto BD (5432) NO expuesto al host
+- Frontend → Backend → BD por red interna
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🚀 Levantar en local
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Requisitos
+- Docker Desktop instalado
+- Git
 
-## Laravel Sponsors
+### Pasos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Daner199/diana-tours.git
+cd diana-tours
 
-### Premium Partners
+# 2. Copiar variables de entorno
+cp .env.example .env
+# Editar .env con tus valores reales
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 3. Levantar todos los servicios
+docker compose up --build
 
-## Contributing
+# 4. Generar APP_KEY (primera vez)
+docker compose exec backend php artisan key:generate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 5. Generar JWT_SECRET (primera vez)
+docker compose exec backend php artisan jwt:secret
 
-## Code of Conduct
+# 6. Ejecutar migraciones
+docker compose exec backend php artisan migrate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 7. Abrir en el navegador
+# Frontend: http://localhost
+# API:      http://localhost:8000/api
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 👥 Usuarios de prueba
 
-## License
+| Rol | Email | Contraseña | Secreto TOTP |
+|-----|-------|------------|--------------|
+| Administrador | admin@prueba.com | Admin123! | `JBSWY3DPEHPK3PXP` |
+| Turista | user@prueba.com | User123! | `KNRW24TMMJQXEZLJ` |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+> **Para el 2FA:** Escanear el secreto TOTP con Google Authenticator, Authy o FreeOTP.
+> Si el correo de verificación tarda, revisar los logs del backend en Render.
+
+---
+
+## 🌐 URLs del sistema
+
+| Servicio | URL |
+|---------|-----|
+| Frontend (producción) | https://diana-tours-frontend.onrender.com |
+| Backend API (producción) | https://diana-tours-backend.onrender.com |
+| Sistema local (Docker) | http://localhost |
+
+> ⚠️ El plan gratuito de Render puede tardar hasta 60 segundos en despertar tras inactividad.
+
+---
+
+## 📦 Versiones y tags
+
+| Tag | Estado | Cambios |
+|-----|--------|---------|
+| v1.2.0 | ✅ Producción | 2FA + Equipo de confianza + despliegue en nube |
+| v1.1.0 | ✅ Estable | Login en dos pasos (TOTP) implementado |
+| v1.0.0 | ✅ Estable | JWT + CRUD básico |
+
+```bash
+# Desplegar versión específica
+git checkout v1.2.0
+docker compose up --build
+```
+
+---
+
+## ✅ Checklist de funcionalidades
+
+- [x] Registro de usuario
+- [x] Login con email y contraseña
+- [x] Solicitud de código 2FA tras login correcto
+- [x] Verificación de código TOTP (enviado al correo)
+- [x] Checkbox "Confiar en este equipo" (30 días)
+- [x] Acceso a rutas protegidas solo con JWT válido
+- [x] Diferentes vistas según rol (Admin, Guía, Turista, Oficinista)
+- [x] Cierre de sesión
+- [x] Gestión de sitios turísticos con mapa interactivo
+- [x] Gestión de paquetes turísticos
+- [x] Reservas y procesamiento de pagos
+- [x] Grupos operativos y logística
+- [x] Caja diaria (apertura, cierre, ingresos, egresos)
+- [x] Dashboard con KPIs y gráficas de ventas
+- [x] Gemelo Digital 360° con Pannellum y Google Street View
+- [x] Panel del guía turístico
+- [x] Panel del oficinista
+- [x] Despliegue en la nube con HTTPS (Render)
+
+---
+
+## 🏢 Stack tecnológico
+
+| Capa | Tecnología |
+|------|------------|
+| Frontend | React 19 + TypeScript + Tailwind CSS + Vite |
+| Backend | Laravel 11 + JWT (tymon/jwt-auth) |
+| Base de datos | PostgreSQL 16 |
+| Contenerización | Docker + Docker Compose |
+| Despliegue | Render (cloud) + VirtualBox Ubuntu (local) |
+| Mapas | Leaflet.js + Nominatim |
+| Visor 360° | Pannellum.js (CDN) + Google Street View |
+
+---
+
+## 📁 Estructura del repositorio
+
+```
+diana-tours/                    ← Raíz del mono-repo
+├── app/                        ← Backend Laravel (controladores, modelos)
+├── config/                     ← Configuración Laravel
+├── database/                   ← Migraciones
+├── routes/                     ← Rutas API
+├── frontend/                   ← Frontend React
+│   ├── src/
+│   │   ├── routes/             ← Páginas y componentes
+│   │   └── api.ts              ← Cliente HTTP (usa VITE_API_URL)
+│   ├── Dockerfile              ← Multi-stage build
+│   ├── nginx.conf              ← Configuración NGINX
+│   └── .env.example
+├── Dockerfile                  ← Backend Docker
+├── docker-compose.yml          ← Orquestación 3 servicios
+├── .env.example                ← Variables de entorno
+└── README.md
+```
