@@ -13,7 +13,12 @@ return [
     'allowed_methods' => ['*'],
 
     // 👇 AQUÍ ESTÁ EL ÚNICO CAMBIO (El puerto de tu React)
-   'allowed_origins' => ['http://localhost:5173', 'http://192.168.100.24', 'http://localhost'],
+   'allowed_origins' => [
+    'http://localhost:5173',
+    'http://192.168.100.24',
+    'http://localhost',
+    'https://diana-tours-frontend.onrender.com',
+],
 
     'allowed_origins_patterns' => [],
 
