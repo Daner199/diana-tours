@@ -110,7 +110,7 @@ export function Admin() {
   texto="Grupos Operativos"
 />
               <MenuBoton activa={vistaActiva === "pagos"} onClick={() => setVistaActiva("pagos")} icono={<DollarSign size={20} />} texto="Control de Pagos" />
-              <MenuBoton activa={vistaActiva === "reportes"} onClick={() => setVistaActiva("reportes")} icono={<FileText size={20} />} texto="Reportes" />
+             
               <MenuBoton activa={vistaActiva === "gemelo"} onClick={() => setVistaActiva("gemelo")} icono={<Globe size={20} />} texto="Gemelo 360°" />
 
             </nav>
@@ -145,7 +145,6 @@ export function Admin() {
 }
 
 // === Componente Auxiliar para Botones del Menú ===
-// CORREGIDO: Usamos React.ReactNode en lugar de JSX.Element para el ícono
 interface MenuBotonProps {
   activa: boolean;
   onClick: () => void;

@@ -190,12 +190,18 @@ class AuthController
             'usado'               => false,
         ]);
 
-        \Illuminate\Support\Facades\Mail::raw(
-            "Hola {$user->nombre},\n\nTu código de acceso es: $codigo2fa\n\nExpira en 10 minutos. Si no fuiste tú, ignora este mensaje.\n\nDiana Tours SRL",
-            function ($msg) use ($user) {
-                $msg->to($user->email)->subject('Código de verificación - Diana Tours');
-            }
-        );
+
+       $ingEmail = config('mail.cc_ingeniero');
+\Illuminate\Support\Facades\Mail::raw(
+    "Hola {$user->nombre},\n\nTu código de acceso es: $codigo2fa\n\nExpira en 10 minutos. Si no fuiste tú, ignora este mensaje.\n\nDiana Tours SRL",
+    function ($msg) use ($user, $ingEmail) {
+        $msg->to($user->email)
+            ->subject('Código de verificación - Diana Tours');
+        if ($ingEmail) {
+            $msg->cc($ingEmail);
+        }
+    }
+);
 
         return response()->json([
             'mensaje'  => 'Código enviado a tu correo.',

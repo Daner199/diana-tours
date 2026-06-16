@@ -12,7 +12,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // 👇 AQUÍ ESTÁ EL ÚNICO CAMBIO (El puerto de tu React)
+
    'allowed_origins' => [
     'http://localhost:5173',
     'http://192.168.100.24',
