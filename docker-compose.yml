@@ -1,10 +1,9 @@
 services:
-
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api}
+        VITE_API_URL: http://localhost:8000/api
     ports:
       - "80:80"
     depends_on:
@@ -22,13 +21,33 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
+      APP_NAME: "Diana Tours"
       APP_ENV: production
+      APP_KEY: base64:MORr21o1MLrJ3h0YbmnXgG48OEO6IiVgNmYji40Lnmc=
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:8000
       DB_CONNECTION: pgsql
       DB_HOST: database
-      DB_PORT: 5432
+      DB_PORT: "5432"
+      DB_DATABASE: tours_diana
+      DB_USERNAME: postgres
+      DB_PASSWORD: "Patitofeo23*"
+      SESSION_DRIVER: file
+      FILESYSTEM_DISK: local
+      QUEUE_CONNECTION: sync
+      CACHE_STORE: file
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: "587"
+      MAIL_USERNAME: escobardaner48@gmail.com
+      MAIL_PASSWORD: tfqniyuhwacilyfc
+      MAIL_ENCRYPTION: tls
+      MAIL_FROM_ADDRESS: escobardaner48@gmail.com
+      MAIL_FROM_NAME: "Diana Tours SRL"
+      MAIL_CC_INGENIERO: doc.josecamilo.tapia.ba@unifranz.edu.bo
+      JWT_SECRET: Ob5VrlQgvUsXTuD1ZAsoC8lRkflTd38LBnF37KxQtVI0LY0wULfd3FpomJV5LOY6
+      JWT_TTL: "1440"
     restart: unless-stopped
     networks:
       - diana-network
@@ -36,13 +55,14 @@ services:
   database:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-diana_tours}
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_DB: tours_diana
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Patitofeo23*"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
